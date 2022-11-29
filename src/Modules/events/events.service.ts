@@ -1,7 +1,6 @@
 import { Repository } from 'typeorm';
 import { Event } from './entities/event.entity';
-import App from "../../app";
-
+import App from '../../app';
 
 export class EventsService {
   private eventRepository: Repository<Event>;
@@ -92,7 +91,9 @@ export class EventsService {
      */
 
   async getEventsWithWorkshops() {
-    throw new Error('TODO task 1');
+    return this.eventRepository
+      .createQueryBuilder('event')
+      .leftJoin('workshops.eventId', 'id');
   }
 
   /* TODO: complete getFutureEventWithWorkshops so that it returns events with workshops, that have not yet started
@@ -162,6 +163,11 @@ export class EventsService {
     ```
      */
   async getFutureEventWithWorkshops() {
-    throw new Error('TODO task 2');
+    const currentdate = new Date().toISOString().replace('T', ' ');
+    return this.eventRepository
+      .createQueryBuilder('event')
+      .leftJoin('workshops.eventId', 'id', `workshops.start > :now`, {
+        now: currentdate,
+      });
   }
 }
